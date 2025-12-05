@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { Sparkles, Send, Check, X, Loader2, Bot, User, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -226,20 +226,18 @@ export function BrushUpDialog({ open, onOpenChange, originalQuestion, onAccept, 
 
           {!finalQuestion && (
             <div className="mt-3 flex gap-2">
-              <Textarea
+              <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="詳細を入力... (Shift+Enterで送信)"
                 disabled={isLoading}
-                rows={2}
-                className="flex-1 resize-none rounded-xl text-sm"
+                className="flex-1 rounded-xl text-sm"
               />
               <Button
                 size="icon"
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="h-auto w-10 rounded-xl"
+                className="h-10 w-10 rounded-xl"
               >
                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
