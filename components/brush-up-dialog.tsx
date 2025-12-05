@@ -118,10 +118,10 @@ export function BrushUpDialog({ open, onOpenChange, originalQuestion, onAccept, 
         let extractedQuestion: string | null = null
 
         if (result.includes("【改善された質問】")) {
-          const match = result.match(/(.*)【改善された質問】\s*(.+)/s)
-          if (match) {
-            displayContent = match[1].trim()
-            extractedQuestion = match[2].trim()
+          const parts = result.split("【改善された質問】")
+          if (parts.length >= 2) {
+            displayContent = parts[0].trim()
+            extractedQuestion = parts[1].trim()
           }
         }
 
