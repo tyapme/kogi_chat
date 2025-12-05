@@ -5,7 +5,7 @@ import { MessageSquare, Monitor, Sparkles } from "lucide-react"
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-8 p-8">
+    <main className="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-6 px-4 py-6">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">講義内チャットシステム</h1>
         <p className="text-muted-foreground">リアルタイムで質問を投稿・管理</p>
