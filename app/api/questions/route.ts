@@ -6,6 +6,7 @@ import {
   updateQuestionStatus,
   updateQuestionAnswered,
   deleteQuestion,
+  restoreQuestion,
 } from "@/lib/question-store"
 
 export async function GET() {
@@ -31,8 +32,11 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   const body = await request.json()
-  const { id, status, answered } = body as { id: string; status?: QuestionStatus; answered?: boolean }
+  const { id, status, answered, restore } = body as { id: string; status?: QuestionStatus; answered?: boolean; restore?: boolean }
 
+  if (restore) {
+    restoreQuestion(id)
+  }
   if (status !== undefined) {
     updateQuestionStatus(id, status)
   }

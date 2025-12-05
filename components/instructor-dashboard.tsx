@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
   MessageCircle,
+  Undo2,
 } from "lucide-react"
 import type { Question, QuestionStatus } from "@/lib/question-store"
 import { cn } from "@/lib/utils"
@@ -65,6 +66,15 @@ export function InstructorDashboard() {
     fetchQuestions()
   }
 
+  async function restoreQuestion(id: string) {
+    await fetch("/api/questions", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, restore: true }),
+    })
+    fetchQuestions()
+  }
+
   async function toggleAnswered(id: string) {
     const question = questions.find((q) => q.id === id)
     if (question) {
@@ -89,8 +99,9 @@ export function InstructorDashboard() {
     })
   }
 
-  const pendingQuestions = questions.filter((q) => q.status === "pending")
-  const answeredQuestions = questions.filter((q) => q.status !== "pending")
+  const pendingQuestions = questions.filter((q) => q.status === "pending" && !q.deleted)
+  const answeredQuestions = questions.filter((q) => q.status !== "pending" && !q.deleted)
+  const deletedQuestions = questions.filter((q) => q.deleted)
 
   function getStatusBadge(status: QuestionStatus) {
     switch (status) {
@@ -105,7 +116,7 @@ export function InstructorDashboard() {
         return (
           <Badge variant="outline" className="border-blue-300 bg-blue-50 text-blue-700">
             <BookOpen className="mr-1 h-3 w-3" />
-            Classroom
+            classroom
           </Badge>
         )
       case "no_response":
@@ -231,7 +242,7 @@ export function InstructorDashboard() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => updateStatus(question.id, "answered_classroom")}>
                             <BookOpen className="mr-2 h-4 w-4" />
-                            Classroomで後日回答
+                            classroom
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => updateStatus(question.id, "no_response")}>
                             <XCircle className="mr-2 h-4 w-4" />
@@ -279,6 +290,41 @@ export function InstructorDashboard() {
                     onClick={() => deleteQuestion(question.id)}
                   >
                     <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 削除済みの質問 */}
+      {deletedQuestions.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between text-lg">
+              <span className="flex items-center gap-2">
+                <Trash2 className="h-5 w-5 text-muted-foreground" />
+                削除済み
+              </span>
+              <Badge variant="secondary">{deletedQuestions.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {deletedQuestions.map((question) => (
+                <div key={question.id} className="flex items-center justify-between rounded-lg border bg-muted/30 p-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <p className="text-sm text-muted-foreground truncate">{question.content}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 shrink-0"
+                    onClick={() => restoreQuestion(question.id)}
+                  >
+                    <Undo2 className="mr-1 h-4 w-4" />
+                    復元
                   </Button>
                 </div>
               ))}

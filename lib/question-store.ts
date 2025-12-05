@@ -11,6 +11,7 @@ export interface Question {
   brushedUp: boolean
   answered: boolean // 口頭で回答済みフラグ
   sessionId?: string // セッションID追加
+  deleted: boolean // ソフトデリートフラグ
 }
 
 // インメモリストア
@@ -21,13 +22,14 @@ export function getQuestions(): Question[] {
   return [...questions].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }
 
-export function addQuestion(question: Omit<Question, "id" | "createdAt" | "status" | "answered">): Question {
+export function addQuestion(question: Omit<Question, "id" | "createdAt" | "status" | "answered" | "deleted">): Question {
   const newQuestion: Question = {
     ...question,
     id: crypto.randomUUID(),
     createdAt: new Date(),
     status: "pending",
     answered: false,
+    deleted: false,
   }
   questions.push(newQuestion)
   notifyListeners()
@@ -51,8 +53,20 @@ export function updateQuestionAnswered(id: string, answered: boolean): void {
 }
 
 export function deleteQuestion(id: string): void {
-  questions = questions.filter((q) => q.id !== id)
-  notifyListeners()
+  const question = questions.find((q) => q.id === id)
+  if (question) {
+    question.deleted = true
+    notifyListeners()
+  }
+}
+
+export function restoreQuestion(id: string): void {
+  const question = questions.find((q) => q.id === id)
+  if (question) {
+    question.deleted = false
+    question.status = "pending"
+    notifyListeners()
+  }
 }
 
 export function subscribe(listener: () => void): () => void {
