@@ -112,17 +112,27 @@ export function BrushUpDialog({ open, onOpenChange, originalQuestion, onAccept, 
         const { done, value } = await reader.read()
         if (done) break
         result += decoder.decode(value, { stream: true })
+
+        // 「【改善された質問】」が含まれる場合、その手前までをメッセージとして表示
+        let displayContent = result
+        let extractedQuestion: string | null = null
+
+        if (result.includes("【改善された質問】")) {
+          const match = result.match(/(.*)【改善された質問】\s*(.+)/s)
+          if (match) {
+            displayContent = match[1].trim()
+            extractedQuestion = match[2].trim()
+          }
+        }
+
         setMessages((prev) => {
           const newMessages = [...prev]
-          newMessages[newMessages.length - 1] = { role: "ai", content: result }
+          newMessages[newMessages.length - 1] = { role: "ai", content: displayContent }
           return newMessages
         })
-      }
 
-      if (result.includes("【改善された質問】")) {
-        const match = result.match(/【改善された質問】\s*(.+)/s)
-        if (match) {
-          setFinalQuestion(match[1].trim())
+        if (extractedQuestion) {
+          setFinalQuestion(extractedQuestion)
         }
       }
     } catch (error) {
