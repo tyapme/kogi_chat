@@ -138,15 +138,9 @@ export function InstructorDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">講師ダッシュボード</h1>
-          <p className="text-sm text-muted-foreground">リアルタイムで学生の質問を管理</p>
-        </div>
-        <Button variant="outline" size="sm" onClick={fetchQuestions}>
-          <RefreshCw className="mr-2 h-4 w-4" />
-          更新
-        </Button>
+      <div>
+        <h1 className="text-2xl font-bold">講師ダッシュボード</h1>
+        <p className="text-sm text-muted-foreground">リアルタイムで学生の質問を管理</p>
       </div>
 
       {/* 未回答の質問 */}
@@ -183,7 +177,9 @@ export function InstructorDashboard() {
                         ) : (
                           <User className="h-4 w-4 text-muted-foreground" />
                         )}
-                        <span className="text-xs text-muted-foreground">{question.isAnonymous ? "匿名" : "実名"}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {question.isAnonymous ? "匿名" : question.nickname || "ニックネーム"}
+                        </span>
                         <span className="text-xs text-muted-foreground">{formatTime(question.createdAt)}</span>
                         {question.brushedUp && (
                           <Badge variant="secondary" className="text-xs">
